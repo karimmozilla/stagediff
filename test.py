@@ -13,7 +13,7 @@ class TestStageDiff(unittest.TestCase):
         stage2 = Usd.Stage.CreateInMemory()
         stage2.DefinePrim("/root")
 
-        result = stagediff.analyisStage(stage1, stage2)
+        result = stagediff.analyseStage(stage1, stage2)
         self.assertEqual(result[0], stagediff.Status().primAdded)
 
     def testPrimRemoved(self):
@@ -21,7 +21,7 @@ class TestStageDiff(unittest.TestCase):
         stage1.DefinePrim("/root")
         stage2 = Usd.Stage.CreateInMemory()
         
-        result = stagediff.analyisStage(stage1, stage2)
+        result = stagediff.analyseStage(stage1, stage2)
         self.assertEqual(result[0], stagediff.Status().primRemoved)
 
     def testPrimTypeChanged(self):
@@ -31,7 +31,7 @@ class TestStageDiff(unittest.TestCase):
         stage2 = Usd.Stage.CreateInMemory()
         stage2.DefinePrim("/root", "Xform")
         
-        result = stagediff.analyisStage(stage1, stage2)
+        result = stagediff.analyseStage(stage1, stage2)
         self.assertEqual(result[0], stagediff.Status().primTypeChanged)
 
     def testPrimKindChanged(self):
@@ -43,7 +43,7 @@ class TestStageDiff(unittest.TestCase):
         prim = stage2.DefinePrim("/root")
         Usd.ModelAPI(prim).SetKind(Kind.Tokens.subcomponent)
         
-        result = stagediff.analyisStage(stage1, stage2)
+        result = stagediff.analyseStage(stage1, stage2)
         self.assertEqual(result[0], stagediff.Status().primKindChanged)
 
     def testPrimPathChanged(self):
@@ -53,7 +53,7 @@ class TestStageDiff(unittest.TestCase):
         stage2 = Usd.Stage.CreateInMemory()
         stage2.DefinePrim("/root/child")
         
-        result = stagediff.analyisStage(stage1, stage2)
+        result = stagediff.analyseStage(stage1, stage2)
         self.assertEqual(result[0], stagediff.Status().primPathChanged)
 
     def testAttributeAdded(self):
@@ -64,7 +64,7 @@ class TestStageDiff(unittest.TestCase):
         prim = stage2.DefinePrim("/root")
         prim.CreateAttribute("test", Sdf.ValueTypeNames.Int)
         
-        result = stagediff.analyisStage(stage1, stage2)
+        result = stagediff.analyseStage(stage1, stage2)
         self.assertEqual(result[0], stagediff.Status().attrAdded)
 
     def testAttributeRemoved(self):
@@ -75,7 +75,7 @@ class TestStageDiff(unittest.TestCase):
         stage2 = Usd.Stage.CreateInMemory()
         stage2.DefinePrim("/root")
 
-        result = stagediff.analyisStage(stage1, stage2)
+        result = stagediff.analyseStage(stage1, stage2)
         self.assertEqual(result[0], stagediff.Status().attrRemoved)
 
 
@@ -90,7 +90,7 @@ class TestStageDiff(unittest.TestCase):
         attr = prim.CreateAttribute("test", Sdf.ValueTypeNames.Int)
         attr.Set(9)
 
-        result = stagediff.analyisStage(stage1, stage2)
+        result = stagediff.analyseStage(stage1, stage2)
         self.assertEqual(result[0], stagediff.Status().attrValueChanged)
 
     def testAttributeTypeChanged(self):
@@ -102,7 +102,7 @@ class TestStageDiff(unittest.TestCase):
         prim = stage2.DefinePrim("/root")
         prim.CreateAttribute("test", Sdf.ValueTypeNames.Float)
 
-        result = stagediff.analyisStage(stage1, stage2)
+        result = stagediff.analyseStage(stage1, stage2)
         self.assertEqual(result[0], stagediff.Status().attrTypeChanged)
 
     @unittest.skip

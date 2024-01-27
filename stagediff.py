@@ -3,7 +3,7 @@ from pxr import Usd
 
 class StageDiff:
     result = []
-    def analyiz(self, stage1, stage2):
+    def analyse(self, stage1, stage2):
         
         primNames = {f.GetName():f for f in stage1.Traverse()}
             
@@ -47,9 +47,9 @@ class StageDiff:
 
 
 
-def analyisStage(stage1, stage2):
+def analyseStage(stage1, stage2):
     cls = StageDiff()
-    cls.analyiz(stage1, stage2)
+    cls.analyse(stage1, stage2)
     return cls.result
 
 
