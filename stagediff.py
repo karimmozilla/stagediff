@@ -1,66 +1,73 @@
-from pxr import Usd
+# from pxr import Usd
 
 
 class StageDiff:
-    result = []
     def analyse(self, stage1, stage2):
+        result = []
         
         primNames = {f.GetName():f for f in stage1.Traverse()}
             
         for prim in stage2.Traverse():
+            changesForPrims=False
             primName = prim.GetName()
             if primName in primNames:
-                # check other
 
-                if prim.GetTypeName() != primNames[prim.GetName()].GetTypeName():
-                    self.result.append(Status().primTypeChanged)
+                oldType, newType = primNames[primName].GetTypeName(), prim.GetTypeName()
+                if oldType != newType:
+                    result.append(Status("primTypeChanged", prim=prim, oldType=oldType, newType=newType))
+                    changesForPrims=True
 
-                if prim.GetKind() != primNames[prim.GetName()].GetKind():
-                    self.result.append(Status().primKindChanged)
+                oldKind, newKind = primNames[primName].GetKind(), prim.GetKind()
+                if oldKind != newKind:
+                    result.append(Status("primKindChanged", prim=prim, oldKind=oldKind, newKind=newKind))
+                    changesForPrims=True
 
-                if prim.GetPath() != primNames[prim.GetName()].GetPath():
-                    self.result.append(Status().primPathChanged)                    
+                oldPath = primNames[primName].GetPath()
+                if prim.GetPath() != oldPath:
+                    result.append(Status("primPathChanged", prim=prim, oldPath=oldPath))                    
+                    changesForPrims=True
 
-                attrs1 = {f.GetName(): f for f in primNames[prim.GetName()].GetAttributes()}
-                for attr in prim.GetAttributes():
-                    if attr.GetName() in attrs1:
-                        #TODO: Handle attr time sample values
-                        srcAttr = attrs1[attr.GetName()]
-                        if attr.Get() != srcAttr.Get():
-                            self.result.append(Status().attrValueChanged)
-                        if attr.GetTypeName() != srcAttr.GetTypeName():
-                            self.result.append(Status().attrTypeChanged)
+                if not changesForPrims:
+                    attrs = {f.GetName(): f for f in primNames[primName].GetAttributes()}
+                    for attr in prim.GetAttributes():
+                        attrName=attr.GetName()
+                        if attrName in attrs:
+                            srcAttr = attrs[attrName]
+                            #TODO: Handle attr time sample values
+                            oldValue, newValue = attr.Get(), srcAttr.Get()
+                            if oldValue != newValue:
+                                result.append(Status("attrValueChanged", attr=attr, oldValue = oldValue, newValue = newValue))
+                            oldType, newType = attr.GetTypeName(), srcAttr.GetTypeName()
+                            if oldType != newType:
+                                result.append(Status("attrTypeChanged", attr=attr, oldType = oldType, newType = newType))
 
-                        attrs1.pop(attr.GetName())
-                    else:
-                        self.result.append(Status().attrAdded)
-                    
-                for attrName in attrs1:
-                    self.result.append(Status().attrRemoved)
+                            attrs.pop(attrName)
+                        else:
+                            result.append(Status("attrAdded", attr=attr))
+                        
+                    for attrName in attrs:
+                        result.append(Status("attrRemoved", attr=attrs[attrName]))
 
                 primNames.pop(primName)
             else:
-                self.result.append(Status().primAdded)
+                result.append(Status("primAdded", prim=prim))
 
         for prim in primNames:
-            self.result.append(Status().primRemoved)
+            result.append(Status("primRemoved", prim=primNames[prim]))
 
-
+        return result
 
 def analyseStage(stage1, stage2):
     cls = StageDiff()
-    cls.analyse(stage1, stage2)
-    return cls.result
+    return cls.analyse(stage1, stage2)
+    
 
 
 class Status:
+    changeType=None
 
-    primAdded = "primAdded"
-    primRemoved = "primRemoved"
-    primTypeChanged = "primTypeChanged"
-    primKindChanged = "primKindChanged"
-    primPathChanged = "primPathChanged"
-    attrAdded = "attrAdded"
-    attrRemoved = "attrRemoved"
-    attrValueChanged = "attrValueChanged"
-    attrTypeChanged = "attrTypeChanged"
+
+    def __init__(self, state, *args, **kwargs) -> None:
+        self.changeType = state
+        for arg in kwargs:
+            setattr(self, arg, kwargs[arg])

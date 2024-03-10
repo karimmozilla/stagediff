@@ -21,3 +21,12 @@ detect duplicated or moved prims.
 relationship & material assignment
 
 how to index the scene
+
+
+### User Interfaces
+
+#### Houdini HDA
+
+- Add option to compare only two prims.
+- Compare prims with the same primpath in different stage.
+- compare prims with different primpath in different stage and same stage.
