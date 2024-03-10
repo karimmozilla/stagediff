@@ -1,6 +1,6 @@
 import unittest
 from pxr import Usd, Sdf, Kind
-import stagediff, extractor
+import stagediff
 
 class TestStageDiff(unittest.TestCase):
 
@@ -24,10 +24,6 @@ class TestStageDiff(unittest.TestCase):
         self.result = stagediff.analyseStage(stage1, stage2)
         self.assertEqual(self.result[0].changeType, "primAdded")
 
-        # ext = extractor.LayerExtractor(self.result)
-        # addedPrim = ext.layer.GetPrimAtPath("/root")
-        # self.assertTrue(addedPrim != None)
-
     def testPrimRemoved(self):
         stage1 = Usd.Stage.CreateInMemory()
         stage1.DefinePrim("/root")
@@ -35,10 +31,6 @@ class TestStageDiff(unittest.TestCase):
         
         self.result = stagediff.analyseStage(stage1, stage2)
         self.assertEqual(self.result[0].changeType, "primRemoved")
-
-        # ext = extractor.LayerExtractor(self.result)
-        # addedPrim = ext.layer.GetPrimAtPath("/root")
-        # # self.assertTrue(addedPrim == None) # TODO???
 
     def testPrimTypeChanged(self):
         stage1 = Usd.Stage.CreateInMemory()
@@ -51,11 +43,6 @@ class TestStageDiff(unittest.TestCase):
         self.result = stagediff.analyseStage(stage1, stage2)
         # print([[getattr(f, i) for i in dir(f)if not "__"in i] for f in self.result])
         self.assertEqual(self.result[0].changeType, "primTypeChanged")
-
-        # ext = extractor.LayerExtractor(self.result)
-        # changedPrim = ext.layer.GetPrimAtPath("/root")
-        # self.assertTrue(changedPrim.GetTypeName() == newType) # TODO: find sdf.primSpec getType
-
 
 
     def testPrimKindChanged(self):
@@ -70,10 +57,6 @@ class TestStageDiff(unittest.TestCase):
         
         self.result = stagediff.analyseStage(stage1, stage2)
         self.assertEqual(self.result[0].changeType, "primKindChanged")
-
-        # ext = extractor.LayerExtractor(self.result)
-        # changedPrim = ext.layer.GetPrimAtPath("/root")
-        # # self.assertTrue(changedPrim.GetTypeName() == newKind) # TODO: find sdf.primSpec getKind
 
     def testPrimPathChanged(self):
         stage1 = Usd.Stage.CreateInMemory()
