@@ -1,3 +1,3 @@
 # StageDiff
 
-I'm trying to explore a python class dynamic way to compare Usd.Stage content to provide a better and smart comparsion rather than the text based diff tools.
+I am endeavoring to investigate a dynamic Python class approach to comparing content within Usd.Stage, aiming to offer an enhanced and intelligent comparison method beyond conventional text-based diff tools.
